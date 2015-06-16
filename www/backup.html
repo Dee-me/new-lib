@@ -51,7 +51,7 @@
           <div class='row' id='content-wrapper'>
             <div class='col-xs-12' style="">
 
-				<div id="results" style="margin-top:33px;">
+				<div id="results">
 				</div>
 			</div>
 		  </div>
@@ -82,27 +82,13 @@
 		box-shadow: 0px 0px 1px 2px #DDDDEC;
 		background-color: #FDFDFC;
 		padding: 5px;
-		margin-top: 3px;
+		margin-top: -13px;
 	}
 	.date{ font-family: 'Roboto', sans-serif; }
-	.title{ font-family: 'Roboto', serif;font-weight: bold;font-size: 15px;padding-bottom: 10px;}
+	.title{ font-family: 'Roboto', serif;font-weight: bold;font-size: 15px;}
 	.video{ font-family: 'Oswald', sans-serif; }
-	.story{ font-family: 'PT Sans', sans-serif;display: block; height: 100px; overflow: hidden;}
+	.story{ font-family: 'PT Sans', sans-serif;}
 	.images{ font-family: 'Slabo 27px', sans-serif; }
-	.story_image{
-		display: inline-block;
-    	float: left;
-	}
-	.story_content{
-		height: 98px;
-		padding-left: 10px;
-		padding-bottom: 2px;
-		overflow: hidden;
-	}
-	.image_items{
-		height: 100px;
-		border: 1px solid #CCC;
-	}
 </style>
 
 <script type="text/javascript">
@@ -159,7 +145,7 @@
 					          		var story_title = "";
 					          		if(titles.content != undefined)
 					          			story_title = wrapReplace(titles.content, 'div');
-
+					          		
 					          		// Content
 					          		var main_story = "";
 					          		if (has (contents, 'span')) {
@@ -181,8 +167,8 @@
 									          		else{console.log(titles.content);}
 							          			}
 					          				}
-					          				
-					          			}	
+					          			}
+
 					          		}
 					          		
 					          		// Content
@@ -224,9 +210,8 @@
 					          			video_link = wrap(contents.iframe.src, 'div');
 
 					          		// Images
-					          		var img_array = [];
-					          		var images = "";
-
+					          		var img_hashes = [];
+					          		var images = [];
 
 					          		if (has(contents, 'div')) {
 					          			++count;
@@ -238,6 +223,7 @@
 
 				          					for (var it = 0; it < divss.length; it++) {
 												
+					          					/*
 				          						if(has(divss[it], 'div')){
 			          								if (has(divss[it].div, 'a')){
 			          									var n_a_links = divss[it].div.a
@@ -245,26 +231,34 @@
 				          									for (var i1 = 0; i1 < n_a_links.length; i1++) {
 				          										if (has(n_a_links[i1], 'img'))
 																	if (has(n_a_links[i1].img, 'src')){
-																		if (img_array.indexOf(n_a_links[i1].img.src) == -1){
-																			images += wrap(n_a_links[i1].img.src, 'div');
-																			img_array.push(n_a_links[i1].img.src);
+																		console.log(n_a_links[i1].img);
+
+																		if (img_hashes.indexOf(n_a_links[i1].img.src.hashCode()) == -1){
+																			images.push(n_a_links[i1].img.src);
+																			img_hashes.push(n_a_links[i1].img.src.hashCode());
+																		}else{
+																			console.log('registered image');
 																		}
 							          								}
 				          									}
 															
 													}
 
+
 													if (has(divss[it].div, 'img'))
 														var n_i_links = divss[it].div.img
 														if(n_i_links != undefined)
 				          									for (var i1 = 0; i1 < n_i_links.length; i1++) {
 																if(has(n_i_links[i1], 'src'))
-																	if (img_array.indexOf(n_i_links[i1].src) == -1){
-							          									images += wrap(n_i_links[i1].src, 'div');
-							          									img_array.push(n_i_links[i1].src);
-							          								}
+																	if (img_hashes.indexOf(n_i_links[i1].src.hashCode()) == -1){
+							          									images.push(n_i_links[i1].src);
+																		img_hashes.push(n_a_links[i1].img.src.hashCode());
+							          								}else{
+																		console.log('registered image');
+																	}
 						          							}
 			          							}
+			          							*/
 
 				          						var a_imgs = divss[it].a;
 				          						var img_imgs = divss[it].img;
@@ -273,10 +267,12 @@
 					          							var img = a_imgs[it1].img;
 					          							if (img != undefined)
 						          							if (img.src != undefined)
-						          								if (img_array.indexOf(img.src) == -1) {
-						          									images += wrapImages(img.src);
-						          									img_array.push(img.src);
-						          								}
+						          								if (img_hashes.indexOf(img.src.hashCode()) == -1) {
+						          									images.push(img.src);
+																	img_hashes.push(n_a_links[i1].img.src.hashCode());
+						          								}else{
+																	console.log('registered image');
+																}
 					          						}
 				          						}
 
@@ -284,9 +280,11 @@
 				          							for (var it1 = 0; it1 < img_imgs.length; it1++) {
 					          							var src = img_imgs[it1].src;
 					          							if (src != undefined)
-					          								if (img_array.indexOf(src) == -1) {
-					          									images += wrapImages(src);
-					          									img_array.push(src);
+					          								if (img_hashes.indexOf(src.hashCode()) == -1) {
+					          									images.push(src);
+					          									images.push(src.hashCode());
+					          								}else{
+					          									console.log('registered image');
 					          								}
 					          						};
 				          						}
@@ -295,17 +293,23 @@
 												if (has(divss[it], 'a'))
 													if (has(divss[it].a, 'img'))
 														if (has(divss[it].a.img, 'src'))
-															if (img_array.indexOf(divss[it].a.img.src) == -1){
-																images += wrapImages(divss[it].a.img.src, 'div');
-																img_array.push(divss[it].a.img.src);
+															if (img_hashes.indexOf(divss[it].a.img.src.hashCode()) == -1){
+																images.push(divss[it].a.img.src);
+																images.push(divss[it].a.img.src.hashCode());
+															}else{
+																console.log('registered image');
 															}
+																
 
 												if (has(divss[it], 'img'))
 													if(has(divss[it].img, 'src'))
-														if (img_array.indexOf(divss[it].img.src) == -1){
-				          									images += wrapImages(divss[it].img.src, 'div');
-				          									img_array.push(divss[it].img.src);
-				          								}
+														if (img_hashes.indexOf(divss[it].img.src.hashCode()) == -1){
+															images.push(divss[it].img.src);
+															images.push(divss[it].img.src.hashCode());
+														}else{
+															console.log('registered image');
+														}
+				          									
 
 				          							
 				          					}
@@ -323,9 +327,11 @@
 								          		for (var k = 0; k < a_links.length; k++ ){
 								          			if(has(a_links[k], 'img'))
 									          			if(has(a_links[k].img, 'src'))
-									          				if (img_array.indexOf(a_links[k].img.src) == -1){
-									          					images += wrapImages(a_links[k].img.src);
-									          					img_array.push(a_links[k].img.src);
+									          				if (img_hashes.indexOf(a_links[k].img.src.hashCode()) == -1){
+									          					images.push(a_links[k].img.src);
+									          					images.push(a_links[k].img.src.hashCode());
+									          				}else{
+									          					console.log('registered image');
 									          				}
 								          		}
 								          	}
@@ -335,13 +341,15 @@
 					          					img_links = image_divs[l].img;
 								          		for (var k = 0; k < img_links; k++ ){
 								          			if(has(img_links[k], 'src'))
-								          				if (img_array.indexOf(img_links[k].src) == -1){
-								          					images += wrapImages(img_links[k].src);
-								          					img_array.push(img_links[k].src);
+								          				if (img_hashes.indexOf(img_links[k].src.hashCode()) == -1){
+								          					images.push(img_links[k].src);
+								          					images.push(img_links[k].src.hashCode());
+								          				}else{
+								          					console.log('registered image');
 								          				}
 								          		}
 								          	}
-					          			};
+					          			}
 					          		}
 					          		
 					          		if(has(contents, 'a')){
@@ -349,25 +357,24 @@
 						          		for (var k = 0; k < image_links; k++ ){
 						          			if(has(image_links[k], 'img'))
 						          				if(has(image_links[k].img, 'src'))
-							          				if (img_array.indexOf(image_links[k].img.src) == -1){
-							          					images += wrapImages(image_links[k].img.src);
-							          					img_array.push(image_links[k].img.src);
+							          				if (img_hashes.indexOf(image_links[k].img.src.hashCode()) == -1){
+							          					images.push(image_links[k].img.src);
+							          					images.push(image_links[k].img.src.hashCode());
+							          				}else{
+							          					console.log('registered image');
 							          				}
 						          		}
+					          						console.log('Dee: ' + main_story);
 					          		}
 
-					          		var all = story_date + story_title + img_array + video_link + main_story
+					          		console.log(images);
+					          		console.log(img_hashes);
 					          		
-					          		var this_story = "<div class='section' onclick=''>";
+					          		var this_story = "<div class='section'><div class='date'>" + story_date +"</div>";
 					          		this_story += "<div class='title'>" + story_title + "</div>";
-					          		for (var i = 0; i < img_array.length; i++) {
-					          			if (img_array[i] != undefined) {
-					          				this_story += "<div class='story_image'>" + wrapImages(img_array[0]) + "</div>";
-					          				break;
-					          			}
-					          		}
-					          		this_story += "<div class='story'><div class='story_content'" + main_story + "</div></div>";
-					          		this_story += "</div>";
+					          		this_story += "<div class='story'>" + main_story + "</div>";
+					          		this_story += "<div class='video'>" + video_link + "</div>";
+					          		this_story += "<div class='images'>" + wrapImages(images[0]) + "</div></div>";
 
 					          		setXmlContent(this_story);
 					          		querySelector.innerHTML = xml_content;
@@ -388,28 +395,17 @@
 		});
 	}
 
-	function showFullStory (date, title, story, images, video) {
-		var story = "<div class='date'>" + date +"</div>";
-		story += "<div class='title'>" + title + "</div>";
-		for (var i = 0; i < images.length; i++) {
-			if (images[i] != undefined)
-				story += "<div class='title'>" + images[i] + "</div>";
-		}
-		story += "<div class='video'>" + video_link + "</div>";
-		story += "<div class='story'>" + main_story + "</div>";
-		console.log(story);
-	}
 
 	function wrapCleanse(obj, tag) {
 		obj = replaceAll('&#39;', '\'', obj);
 		obj = replaceAll('See more photos after the cut...', '', obj);
 		obj = replaceAll('See the photos after the cut...', '', obj);
-		return "<" + tag + ">" + replaceAll('\n', '', obj) + "</" + tag + ">";
+		return "<" + tag + ">" + replaceAll('\n', '', obj) + "</" + tag + "><br />";
 	}
 
 	function wrapReplace(obj, tag){
 		obj = replaceAll('&#39;', '\'', obj);
-		return "<" + tag + ">" + replaceAll('\n', '', obj) + "</" + tag + ">";
+		return "<" + tag + ">" + replaceAll('\n', '', obj) + "</" + tag + "><br />";
 	}
 
 	function wrap (obj, tag) {
@@ -417,7 +413,7 @@
 	}
 	function wrapImages(obj) {
 		var uniqid = randId ();
-		return "<img class='image_items' src='" + obj + "' />" ;
+		return "<div class='collapsed' id='"+uniqid+"' style='max-height:100px;width:100px;'><img src='" + obj + "' style='width:100%;border:1px solid #CCC;' /></div>" ;
 	}
 
 	function toggleFullImage (elem) {
@@ -428,7 +424,16 @@
 			$("#"+elem).animate({'maxHeight': '50px'}, 400);
 	}
 
-
+	String.prototype.hashCode = function() {
+	var hash = 0, i, chr, len;
+	if (this.length == 0) return hash;
+		for (i = 0, len = this.length; i < len; i++) {
+			chr   = this.charCodeAt(i);
+			hash  = ((hash << 5) - hash) + chr;
+			hash |= 0; // Convert to 32bit integer
+		}
+		return hash;
+	}
 
 	function randId () {
 		var randLetter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
